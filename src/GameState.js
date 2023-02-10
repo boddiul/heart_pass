@@ -398,6 +398,24 @@ GameState.prototype = {
             }
         }.bind(this));
 
+
+        
+        let whiteOverlay = this.game.add.image(GAME_WIDTH/2,GAME_HEIGHT/2,"white");
+        whiteOverlay.anchor.set(0.5,0.5);
+        whiteOverlay.scale.set(2000/100,2000/100);
+        whiteOverlay.alpha = 1;
+
+        let tween = this.game.add.tween(whiteOverlay);
+        tween.to({alpha:0},
+                Phaser.Timer.SECOND/2,
+                Phaser.Easing.Circular.Out
+            );
+        tween.onComplete.add(function () {
+                whiteOverlay.visible = false;
+            }.bind(this));
+        tween.start();
+
+
     },
 
     onDown : function() {
@@ -580,6 +598,7 @@ GameState.prototype = {
     showFinal : function() 
     {
 
+        
         this.mainFinalGroup.visible = true;
         let tween = this.game.add.tween(this);
         tween.to({finalShowPos:1},

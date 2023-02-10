@@ -16,8 +16,21 @@ PreloadState.prototype = {
         this.loadBack = this.game.add.image(GAME_WIDTH/2,GAME_HEIGHT/2,"back_loading");
         this.loadBack.anchor.set(0.5,0.5);
         this.loadBack.scale.set(GAME_WIDTH/540,GAME_HEIGHT/960);
-        this.loadText = this.game.add.text(GAME_WIDTH/2,GAME_HEIGHT*0.7,"0%", { font: "100px", fill: "#ffffff", align: "center", boundsAlignH: "center", boundsAlignV: "middle" });
-        this.loadText.anchor.set(0.5,0.5);
+        /*this.loadText = this.game.add.text(GAME_WIDTH/2,GAME_HEIGHT*0.7,"0%", { font: "100px", fill: "#ffffff", align: "center", boundsAlignH: "center", boundsAlignV: "middle" });
+        this.loadText.anchor.set(0.5,0.5);*/
+
+        this.startBar = this.game.add.image(GAME_WIDTH/2,GAME_HEIGHT/2+700,"start_bar");
+        this.startBar.anchor.set(0.5,0.5);
+
+        this.whiteBar = this.game.add.image(GAME_WIDTH/2-600/2,GAME_HEIGHT/2+700,"white");
+        this.whiteBar.anchor.set(0,0.5);
+        this.whiteBar.scale.set(600/100*0,0.2);
+
+        this.heartClosed = this.game.add.image(GAME_WIDTH/2+1000,GAME_HEIGHT/2-50,"heart_closed");
+        this.heartClosed.anchor.set(0.5,0.5);
+
+        this.key = this.game.add.image(GAME_WIDTH/2-1000,GAME_HEIGHT/2,"key");
+        this.key.anchor.set(0.5,0.5);
 
 
         this.game.scale.setUserScale(1, 1);
@@ -82,6 +95,7 @@ PreloadState.prototype = {
         //game.load.image('button_restart','assets/button_restart.png');
 
 
+        game.load.image('heart_opened', 'assets/heart_opened.png')
     }
     ,
 
@@ -90,14 +104,56 @@ PreloadState.prototype = {
         this.loadBack.x = GAME_WIDTH/2;
         this.loadBack.y = GAME_HEIGHT/2;
 
+        /*
         this.loadText.text = (progress) + '%'
-        this.loadText.x = GAME_WIDTH/2;
+        this.loadText.x = GAME_WIDTH/2;*/
 
+
+        this.key.x = GAME_WIDTH/2-400*(100-progress)/100-105;
+        this.heartClosed.x = GAME_WIDTH/2+400*(100-progress)/100;
+
+        this.whiteBar.scale.set(600/100*progress/100,0.2);
 
 
     },
 
     create : function () {
-        game.state.start('GameState');
+
+        this.heartClosed.visible = false;
+        this.key.visible = false;
+        let heartOpened = game.add.image(GAME_WIDTH/2,GAME_HEIGHT/2,"heart_opened")
+        heartOpened.anchor.set(0.45,0.60);
+
+        
+        let whiteOverlay = this.game.add.image(GAME_WIDTH/2,GAME_HEIGHT/2,"white");
+        whiteOverlay.anchor.set(0.5,0.5);
+        whiteOverlay.scale.set(2000/100,2000/100);
+        whiteOverlay.alpha = 0;
+
+
+        let tween = this.game.add.tween(heartOpened);
+        tween.to({y:0},
+                Phaser.Timer.SECOND,
+                Phaser.Easing.Back.In
+            );
+        tween.onComplete.add(function () {
+                
+                
+            }.bind(this));
+        tween.start();
+
+        
+        let tween2 = this.game.add.tween(whiteOverlay);
+        tween2.to({alpha:1},
+                Phaser.Timer.SECOND,
+                Phaser.Easing.Circular.In
+            );
+        tween2.onComplete.add(function () {
+                game.state.start('GameState');
+                
+            }.bind(this));
+        tween2.start();
+
+        //
     }
 }
