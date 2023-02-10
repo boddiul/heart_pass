@@ -68,6 +68,20 @@ PreloadState.prototype = {
         game.load.image('image_overlay','assets/image_overlay.png');
 
 
+        game.load.image('final_test','assets/final_test.jpg');
+
+        game.load.image('final_back','assets/final_back.png');
+        game.load.image('circle_overlay','assets/circle_overlay.png');
+        game.load.image('password_rect','assets/password_rect.png');
+        game.load.image('final_blue','assets/final_blue.png');
+        game.load.image('final_rect','assets/final_rect.png');
+
+        
+        game.load.image('button_final','assets/button_final.png');
+        game.load.image('button_share','assets/button_share.png');
+        //game.load.image('button_restart','assets/button_restart.png');
+
+
     }
     ,
 

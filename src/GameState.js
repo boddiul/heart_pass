@@ -247,6 +247,128 @@ GameState.prototype = {
         this.mathText = game.add.text(0, 520, "подбираем...", { font: "70px robotoB", fill: "#000000", align: "center", boundsAlignH: "center", boundsAlignV: "middle" });
         this.mathText.anchor.set(0.5,0.5)
         this.mainMathGroup.add(this.mathText);
+
+
+        this.mainFinalGroup = game.add.group();
+
+        this.finalGroup1 = game.add.group();
+        this.finalGroup2 = game.add.group();
+        this.finalGroup2.y = 1400;
+
+        this.mainFinalGroup.add(this.finalGroup1);
+        this.mainFinalGroup.add(this.finalGroup2);
+
+
+
+        let bm = game.add.image(0,0,"final_back");
+        bm.anchor.set(0.5,0.5);
+
+        this.finalGroup1.add(bm);
+
+        let hh = -350;
+
+        this.finalImage = game.add.image(0,hh,"final_test");
+        this.finalImage.anchor.set(0.5,0.5);
+        
+        this.finalImage.scale.set(400/this.finalImage.width,400/this.finalImage.width)
+
+        this.finalGroup1.add(this.finalImage);
+
+
+        
+        let cm = game.add.image(0,hh,"circle_overlay");
+        cm.anchor.set(0.5,0.5);
+        this.finalGroup1.add(cm);
+
+        let ft1 = game.add.text(0, -84, "пароль от вашего сердечка:", { font: "50px robotoM", fill: "#000000", align: "center", boundsAlignH: "center", boundsAlignV: "middle" });
+        ft1.anchor.set(0.5,0.5)
+        this.finalGroup1.add(ft1);
+
+        let pb = game.add.image(0,40,"password_rect");
+        pb.anchor.set(0.5,0.5);
+        this.finalGroup1.add(pb);
+
+        
+        let ft2 = game.add.text(0, 40, "переноска_для_собак", { font: "50px robotoM", fill: "#ffffff", align: "center", boundsAlignH: "center", boundsAlignV: "middle" });
+        ft2.anchor.set(0.5,0.5)
+        this.finalGroup1.add(ft2);
+
+
+
+        let ft3 = game.add.text(0, 230, "вы чаще всего выбирали\nкатегории «путешествия»\nи «домашние животные»",
+            { font: "40px robotoM", fill: "#000000", align: "center", boundsAlignH: "center", boundsAlignV: "middle" });
+        ft3.anchor.set(0.5,0.5)
+        this.finalGroup1.add(ft3);
+
+
+
+        /*
+
+        let restartButton = game.add.button(100,440,'button_restart',function(){
+
+        },this,0,0,0,0);
+        restartButton.anchor.set(0.5,0.5);
+
+        this.finalGroup1.add(restartButton);*/
+
+
+        let shareButton = game.add.button(0,440,'button_share',function(){
+
+        },this,0,0,0,0);
+        shareButton.anchor.set(0.5,0.5);
+
+        this.finalGroup1.add(shareButton);
+
+        
+
+
+        bm = game.add.image(0,0,"final_back");
+        bm.anchor.set(0.5,0.5);
+
+        this.finalGroup2.add(bm);
+
+        let ft4 = game.add.text(-370, -540, "Не страшно, что ваш\nпароль от сердечка\nтакой простой.",
+        { font: "60px robotoM", fill: "#000000", align: "left", boundsAlignH: "center", boundsAlignV: "middle" });
+        ft4.anchor.set(0,0)
+        this.finalGroup2.add(ft4);
+
+        let ft5 = game.add.text(-370, -300, "Главное, чтобы его знал нужный человек.",
+        { font: "35px robotoM", fill: "#000000", align: "left", boundsAlignH: "center", boundsAlignV: "middle" });
+        ft5.anchor.set(0,0)
+        this.finalGroup2.add(ft5);
+
+        
+        let bluem = game.add.image(0,-20,"final_blue");
+        bluem.anchor.set(0.5,0.5);
+
+        this.finalGroup2.add(bluem);
+
+
+
+        let ft6 = game.add.text(-370, -180, "Но пароль от странички\nВКонтакте должен быть\nгораздо сложнее",
+        { font: "60px robotoM", fill: "#ffffff", align: "left", boundsAlignH: "center", boundsAlignV: "middle" });
+        ft6.anchor.set(0,0)
+        this.finalGroup2.add(ft6);
+
+        let finalButton = game.add.button(300,70,'button_final',function(){
+
+        },this,0,0,0,0);
+        finalButton.anchor.set(0.5,0.5);
+
+        this.finalGroup2.add(finalButton);
+
+        this.finalShowPos = 0;
+
+
+
+        this.finalOffset = 0;
+        this.finalStartPos = 0;
+
+
+
+        this.mainFinalGroup.visible = false;
+        
+
             
 
         this.canSelectCard = false;
@@ -275,12 +397,14 @@ GameState.prototype = {
                 this.categoryPool[e].push(e+(i+1))
             }
         }.bind(this));
+
     },
 
     onDown : function() {
 
 
 
+        this.finalStartPos = this.finalOffset;
         this.clickActive = true;
         this.startClickPos = {x:game.input.x,y:game.input.y}
 
@@ -363,6 +487,15 @@ GameState.prototype = {
     triggerVote : function(type) 
     {
 
+        if (type==="like")
+        {
+            
+            let catName = this.currentCardId.slice(0, -1);
+
+            this.categoryScore[catName]+=1;
+        }
+
+
         this.canSelectCard = false;
         let new_x = type === "like" ? 1 : -1;
 
@@ -409,11 +542,24 @@ GameState.prototype = {
 
         let tween = this.game.add.tween(this);
         tween.to({mathTimer:1},
-            Phaser.Timer.SECOND*6,
+            Phaser.Timer.SECOND*4,
             Phaser.Easing.Linear.None
         );
         tween.onComplete.add(function () {
 
+            this.showFinal();
+
+            let tween3 = this.game.add.tween(this.mainMathGroup);
+            tween3.to({alpha:0},
+                Phaser.Timer.SECOND/3,
+                Phaser.Easing.Circular.InOut
+            );
+            tween3.onComplete.add(function () {
+    
+                
+    
+            }.bind(this));
+            tween3.start();
         }.bind(this));
         tween.start();
 
@@ -424,10 +570,27 @@ GameState.prototype = {
         );
         tween2.onComplete.add(function () {
 
+            
+
         }.bind(this));
         tween2.start();
     },
 
+
+    showFinal : function() 
+    {
+
+        this.mainFinalGroup.visible = true;
+        let tween = this.game.add.tween(this);
+        tween.to({finalShowPos:1},
+            Phaser.Timer.SECOND*1,
+            Phaser.Easing.Circular.Out
+        );
+        tween.onComplete.add(function () {
+
+        }.bind(this));
+        tween.start();
+    },
     startTest : function()
     {
 
@@ -519,6 +682,20 @@ GameState.prototype = {
 
     update : function () {
 
+        if (this.mainFinalGroup.visible)
+        {
+            if (this.clickActive)
+            {
+
+                this.finalOffset = this.finalStartPos - (this.startClickPos.y - game.input.y)*1.5;
+
+
+                if (this.finalOffset>0)
+                    this.finalOffset = 0;
+                if (this.finalOffset<-1400)
+                    this.finalOffset = -1400;
+            }
+        }
         
 
         this.mainTutorialGroup.x = GAME_WIDTH/2;
@@ -531,6 +708,10 @@ GameState.prototype = {
         
         this.mainMathGroup.x = GAME_WIDTH/2;
         this.mainMathGroup.y = GAME_HEIGHT/2-400;
+
+        
+        this.mainFinalGroup.x = GAME_WIDTH/2;
+        this.mainFinalGroup.y = GAME_HEIGHT/2+this.finalOffset+(1-this.finalShowPos)*2000;
 
 
         for (let i=0;i<5;i++)
@@ -595,9 +776,9 @@ GameState.prototype = {
         {
             let aa = this.cardPos[i].y;
 
-            if (Math.abs(this.cardPos[i].x)>0.5)
+            if (Math.abs(this.cardPos[i].x)>0.2)
             {
-                aa -= Math.abs(this.cardPos[i].x)-0.5
+                aa -= Math.abs(this.cardPos[i].x)-0.2
             }
 
             if (aa<0)
