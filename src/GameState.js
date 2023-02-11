@@ -137,7 +137,7 @@ GameState.prototype = {
         let likeButton = game.add.button(100,440,'button_vote',function(){
 
             if (this.canSelectCard)
-                this.triggerVote("dislike")
+                this.triggerVote("like")
         },this,0,0,0,0);
         likeButton.anchor.set(0.5,0.5);
 
@@ -145,7 +145,7 @@ GameState.prototype = {
         let dislikeButton = game.add.button(-100,440,'button_vote',function(){
 
             if (this.canSelectCard)
-                this.triggerVote("like")
+                this.triggerVote("dislike")
         },this,1,1,1,1);
         dislikeButton.anchor.set(0.5,0.5);
 
@@ -179,6 +179,8 @@ GameState.prototype = {
 
         this.testStep = 0;
         this.barStep = 0;
+
+        this.rorWas = false;
 
 
 
@@ -267,12 +269,18 @@ GameState.prototype = {
 
         let hh = -350;
 
+        /*
         this.finalImage = game.add.image(0,hh,"final_test");
         this.finalImage.anchor.set(0.5,0.5);
         
         this.finalImage.scale.set(400/this.finalImage.width,400/this.finalImage.width)
 
-        this.finalGroup1.add(this.finalImage);
+        this.finalGroup1.add(this.finalImage);*/
+
+
+        this.finalImageGroup = game.add.group();
+        this.finalImageGroup.y = hh;
+        this.finalGroup1.add(this.finalImageGroup);
 
 
         
@@ -289,16 +297,16 @@ GameState.prototype = {
         this.finalGroup1.add(pb);
 
         
-        let ft2 = game.add.text(0, 40, "переноска_для_собак", { font: "50px robotoM", fill: "#ffffff", align: "center", boundsAlignH: "center", boundsAlignV: "middle" });
-        ft2.anchor.set(0.5,0.5)
-        this.finalGroup1.add(ft2);
+        this.finalPassText = game.add.text(0, 40, "переноска_для_собак", { font: "50px robotoM", fill: "#ffffff", align: "center", boundsAlignH: "center", boundsAlignV: "middle" });
+        this.finalPassText.anchor.set(0.5,0.5)
+        this.finalGroup1.add(this.finalPassText);
 
 
 
-        let ft3 = game.add.text(0, 230, "вы чаще всего выбирали\nкатегории «путешествия»\nи «домашние животные»",
+        this.finalCategoryText = game.add.text(0, 230, "вы чаще всего выбирали\nкатегории «путешествия»\nи «домашние животные»",
             { font: "40px robotoM", fill: "#000000", align: "center", boundsAlignH: "center", boundsAlignV: "middle" });
-        ft3.anchor.set(0.5,0.5)
-        this.finalGroup1.add(ft3);
+            this.finalCategoryText.anchor.set(0.5,0.5)
+        this.finalGroup1.add(this.finalCategoryText);
 
 
 
@@ -491,12 +499,12 @@ GameState.prototype = {
             
             if (this.cardPos[this.testStep].x<-0.3)
             {
-                this.triggerVote("dislike")
+                this.triggerVote("like")
             }
             else if (this.cardPos[this.testStep].x>0.3)
             {
 
-                this.triggerVote("like")
+                this.triggerVote("dislike")
             }
         }
     },
@@ -515,7 +523,7 @@ GameState.prototype = {
 
 
         this.canSelectCard = false;
-        let new_x = type === "like" ? 1 : -1;
+        let new_x = type === "like" ? -1 : 1;
 
 
         let tween = this.game.add.tween(this.cardPos[this.testStep]);
@@ -592,11 +600,63 @@ GameState.prototype = {
 
         }.bind(this));
         tween2.start();
+
+
+
+        let arr = [];
+        CATEGORIES.forEach(function(e)
+        {
+            if (e!=="ror")
+                arr.push([e,this.categoryScore[e]]);
+        }.bind(this));
+
+        arr = arr.sort(function(a,b) {
+
+            return -((a[1] < b[1]) ? -1 : ((a[1] > b[1]) ? 1 : 0));
+
+        })
+
+        console.log(arr);
+
+
+        let cat1 = arr[0][0];
+        let cat2 = arr[1][0];
+
+        this.showId = null;
+        this.showPass = null;
+
+
+        for (let i=0;i<FINAL_DATA.length;i++)
+            if ((cat1===FINAL_DATA[i]["Theme1"] && cat2===FINAL_DATA[i]["Theme2"]) || (cat1===FINAL_DATA[i]["Theme2"] && cat2===FINAL_DATA[i]["Theme1"]))
+                {
+                    this.showId = FINAL_DATA[i]["image_id"];
+                    this.showPass = FINAL_DATA[i]["name"];
+                }
+
+        this.showCategory = "вы чаще всего выбирали\nкатегории «"+CATEGORIES_NAME[cat1]+"» и «"+CATEGORIES_NAME[cat2]+"»";
+
+        game.load.image(this.showId,"assets/final_compressed/"+this.showId+".jpg");
+        game.load.start();
+
+
     },
 
 
     showFinal : function() 
     {
+
+
+        this.finalImage = game.add.image(0,0,this.showId);
+        this.finalImage.anchor.set(0.5,0.5);
+        
+        this.finalImage.scale.set(400/this.finalImage.width,400/this.finalImage.width)
+
+        this.finalImageGroup.add(this.finalImage);
+
+        this.finalPassText.text = this.showPass;
+
+        this.finalCategoryText.text = this.showCategory;
+
 
         
         this.mainFinalGroup.visible = true;
@@ -637,6 +697,8 @@ GameState.prototype = {
 
         CATEGORIES.forEach(function(e)
         {
+            if (e==="ror" && this.rorWas)
+                return;
             for (let i=0;i<this.categoryPool[e].length;i++)
             {
                 fullList.push(this.categoryPool[e][i]);
@@ -654,6 +716,9 @@ GameState.prototype = {
         let index = this.categoryPool[catName].indexOf(cId);
         
         this.categoryPool[catName].splice(index, 1);
+
+        if (catName==="ror")
+            this.rorWas = true;
 
         return cId
 
