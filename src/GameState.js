@@ -133,23 +133,35 @@ GameState.prototype = {
 
         this.mainTestGroup.add(testBack);*/
 
+        this.likeScale = 1;
+        this.dislikeScale = 1;
+        this.heartScale = 1;
 
-        let likeButton = game.add.button(100,440,'button_vote',function(){
+
+        this.likeButton = game.add.button(100,440,'button_vote',function(){
 
             if (this.canSelectCard)
+            {
+
                 this.triggerVote("like")
+                this.likeScale = 1.3;
+            }
         },this,0,0,0,0);
-        likeButton.anchor.set(0.5,0.5);
+        this.likeButton.anchor.set(0.5,0.5);
 
-        this.mainTestGroup.add(likeButton);
-        let dislikeButton = game.add.button(-100,440,'button_vote',function(){
+        this.mainTestGroup.add(this.likeButton);
+        this.dislikeButton = game.add.button(-100,440,'button_vote',function(){
 
             if (this.canSelectCard)
+            {
+                
                 this.triggerVote("dislike")
+                this.dislikeScale = 1.3;
+            }
         },this,1,1,1,1);
-        dislikeButton.anchor.set(0.5,0.5);
+        this.dislikeButton.anchor.set(0.5,0.5);
 
-        this.mainTestGroup.add(dislikeButton);
+        this.mainTestGroup.add(this.dislikeButton);
 
 
         this.stepText = game.add.text(-440, 690, "0/20", { font: "55px robotoM", fill: "#000000", align: "left", boundsAlignH: "center", boundsAlignV: "middle" });
@@ -172,9 +184,9 @@ GameState.prototype = {
         this.lock.anchor.set(0.5,0.5);
         this.mainTestGroup.add(this.lock)
 
-        let heart = game.add.image(440,800,"heart");
-        heart.anchor.set(1,0.5);
-        this.mainTestGroup.add(heart);
+        this.heart = game.add.image(440-135/2,800,"heart");
+        this.heart.anchor.set(0.5,0.5);
+        this.mainTestGroup.add(this.heart);
 
 
         this.testStep = 0;
@@ -679,11 +691,11 @@ GameState.prototype = {
         if (this.canSelectCard)
         {
             
-            if (this.cardPos[this.testStep].x<-0.3)
+            if (this.cardPos[this.testStep].x<-0.23)
             {
                 this.triggerVote("like")
             }
-            else if (this.cardPos[this.testStep].x>0.3)
+            else if (this.cardPos[this.testStep].x>0.23)
             {
 
                 this.triggerVote("dislike")
@@ -698,6 +710,9 @@ GameState.prototype = {
         if (type==="like")
         {
             
+            
+            this.heartScale = 1.2;
+
             let catName = this.currentCardId.slice(0, -1);
 
             this.categoryScore[catName]+=1;
@@ -987,6 +1002,30 @@ GameState.prototype = {
                     this.finalOffset = -1400;
             }
         }
+
+
+
+        this.likeButton.scale.set(this.likeScale,this.likeScale);
+        this.dislikeButton.scale.set(this.dislikeScale,this.dislikeScale);
+        this.heart.scale.set(this.heartScale,this.heartScale);
+
+
+        let rr = 0.025;
+        if (this.likeScale>1)
+            this.likeScale-=rr
+        else
+            this.likeScale = 1;
+
+        if (this.dislikeScale>1)
+            this.dislikeScale-=rr
+        else
+            this.dislikeScale = 1;
+
+        if (this.heartScale>1)
+            this.heartScale-=rr/2
+        else
+            this.heartScale = 1;
+
         
 
         this.mainTutorialGroup.x = GAME_WIDTH/2;
