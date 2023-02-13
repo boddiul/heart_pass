@@ -3,7 +3,7 @@
 ROOM_WIDTH =2048;
 ROOM_HEIGHT = 1284;
 
-CATEGORIES = ["fashion","food","games","love","money","movies","music","pet","sport","travel","ror"]
+CATEGORIES = ["fashion","food","games","love","money","movies","music","pets","sport","travel","ror"]
 
 CATEGORIES_NAME = 
 {
@@ -14,13 +14,13 @@ CATEGORIES_NAME =
     "money" : "деньги",
     "movies" : "кино",
     "music" : "музыка",
-    "pet" : "животные",
+    "pets" : "животные",
     "sport" : "спорт",
     "travel" : "путешествия",
 
 }
 
-CATEGORIES_IMAGE_NUM = 4;
+CATEGORIES_IMAGE_NUM = 3;
 
 TEST_STEPS = 25;
 
@@ -110,7 +110,7 @@ FINAL_DATA = [
     {
       "Theme1": "movies",
       "Theme2": "money",
-      "name": "Волк с Уолл-Стрит",
+      "name": "Волк с Уолл Стрит",
       "image_id": "wolf"
     },
     {
@@ -242,7 +242,7 @@ FINAL_DATA = [
     {
       "Theme1": "music",
       "Theme2": "love",
-      "name": "романтик коллекшн '99",
+      "name": "романтик коллекшн 99",
       "image_id": "roman"
     },
     {
@@ -296,7 +296,7 @@ FINAL_DATA = [
     {
       "Theme1": "fashion",
       "Theme2": "love",
-      "name": "Victoria’s Secret",
+      "name": "Victorias Secret",
       "image_id": "victoria"
     },
     {

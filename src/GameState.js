@@ -309,25 +309,96 @@ GameState.prototype = {
         this.finalGroup1.add(this.finalCategoryText);
 
 
+        let xw = 150;
 
-        /*
+        this.restartButton = game.add.button(xw*1.5,440,'button_restart',function(){
 
-        let restartButton = game.add.button(100,440,'button_restart',function(){
+            
+            ym(92442722,'reachGoal',"click_restart")
+
+            game.state.start('GameState');
+        },this,0,0,0,0);
+        this.restartButton.anchor.set(0.5,0.5);
+
+        this.finalGroup1.add(this.restartButton);
+
+
+        this.shareButton = [null,null,null];
+
+        for (let i=0;i<3;i++)
+        {
+            this.shareButton[i] = game.add.button(xw*(-1.5+i),440+50,'button_share',function(){
+
+                let url = "https://heartpass.ru/"
+                let pass = "Мой пароль: "+this.showPass;
+
+
+                if (i==0)
+                {
+                    this.openURL("http://vk.com/share.php?url="+url+"&title="+pass,"share_vk")
+                }
+                else if (i==1)
+                {
+
+                    this.openURL("https://connect.ok.ru/offer?url="+url,"share_ok")
+                }
+                else if (i==2)
+                {
+                    this.openURL("https://t.me/share/url?url="+url+"&text="+pass,"share_tg")
+                }
+
+
+            },this,i,i,i,i);
+            this.shareButton[i].anchor.set(0.5,0.5);
+    
+            this.finalGroup1.add(this.shareButton[i]);
+
+            this.shareButton[i].visible = false;
+    
+        }
+ 
+        let shareBigPressed = false;
+        this.shareBigI = 0;
+        this.shareButtonBig = game.add.button(xw*(-0.5),440,'button_share_big',function(){
+
+
+            if (!shareBigPressed)
+            {
+                ym(92442722,'reachGoal',"click_share")
+
+                shareBigPressed = true;
+                for (let i=0;i<3;i++)
+                {
+                    this.shareButton[i].alpha = 0;
+                    this.shareButton[i].visible = true;
+                    let tween1 = this.game.add.tween(this.shareButton[i]);
+                    tween1.to({y:440,alpha:1},
+                        Phaser.Timer.SECOND/2,
+                        Phaser.Easing.Quartic.Out
+                    );
+                    tween1.onComplete.add(function () {
+                        
+                    }.bind(this));
+                    tween1.start();
+                }
+                let tween2 = this.game.add.tween(this.shareButtonBig);
+                tween2.to({y:440-50,alpha:0},
+                    Phaser.Timer.SECOND/2,
+                    Phaser.Easing.Quartic.Out
+                );
+                tween2.onComplete.add(function () {
+                    this.shareButtonBig.visible = false;
+                }.bind(this));
+                tween2.start();
+            }
+
 
         },this,0,0,0,0);
-        restartButton.anchor.set(0.5,0.5);
+        this.shareButtonBig.anchor.set(0.5,0.5);
 
-        this.finalGroup1.add(restartButton);*/
+        this.finalGroup1.add(this.shareButtonBig);
 
 
-        let shareButton = game.add.button(0,440,'button_share',function(){
-
-        },this,0,0,0,0);
-        shareButton.anchor.set(0.5,0.5);
-
-        this.finalGroup1.add(shareButton);
-
-        
 
 
         bm = game.add.image(0,0,"final_back");
@@ -346,24 +417,134 @@ GameState.prototype = {
         this.finalGroup2.add(ft5);
 
         
-        let bluem = game.add.image(0,-20,"final_blue");
-        bluem.anchor.set(0.5,0.5);
+        this.blueBack = [null,null,null,null];
 
-        this.finalGroup2.add(bluem);
+        //0,-20 -390,-120,+150,+420 (+270)
+
+        this.blueBack[0] = game.add.image(0,-20,"final_blue");
+        this.blueBack[0].anchor.set(0.5,0.5);
+        this.finalGroup2.add(this.blueBack[0]);
+
+        this.blueBack[1] = game.add.image(0,-20,"final_blue");
+        this.blueBack[1].anchor.set(0.5,0.5);
+        this.finalGroup2.add(this.blueBack[1]);
 
 
+        this.finalRect = [null,null,null,null];
 
-        let ft6 = game.add.text(-370, -180, "Но пароль от странички\nВКонтакте должен быть\nгораздо сложнее",
+        this.finalText = [null,null,null,null];
+
+        let texts = [">12","cM1","!#%","2FA"];
+        let textsData = ["Надёжный пароль — это\nминимум 12 символов.",
+        "Используйте в пароле цифры\nи буквы разных регистров.\n«M» и «m» — это разные символы.",
+        "Не забывайте про знаки препинания\nи спецсимволы. Это дополнительно\nусложняет пароль.",
+        "Двухфакторная аутентфикация\nзащитит аккаунт, даже если\nзлоумышленники узнают пароль."];
+
+        this.blueBack[2] = game.add.image(0,-20,"final_blue");
+        this.blueBack[2].anchor.set(0.5,0.5);
+        this.finalGroup2.add(this.blueBack[2]);
+
+        for (let i=0;i<4;i++)
+        {
+                
+            this.finalRect[i] = game.add.button(0,0,"final_rect",function(){
+
+                if (!this.finalMoving && !this.finalWhiteGroup.visible)
+                {
+
+                    ym(92442722,'reachGoal',"click_more"+(i+1))
+
+                    this.finalWhiteGroup.visible = true;
+                    this.finalWhiteHeader.text = texts[i];
+                    this.finalWhiteText.text = textsData[i];
+                }
+            },this);
+            this.finalRect[i].anchor.set(0.5,0.5);
+            this.finalGroup2.add(this.finalRect[i]);
+
+
+            this.finalText[i] = game.add.text(0, 0, texts[i],
+            { font: "75px robotoM", fill: "#ffffff", align: "left", boundsAlignH: "center", boundsAlignV: "middle" });
+            this.finalText[i].anchor.set(0,0)
+            this.finalGroup2.add(this.finalText[i]);
+        }
+
+        this.finalWhiteGroup = game.add.group();
+        this.finalWhiteGroup.y = -20;
+        this.finalWhiteGroup.visible = false;
+
+        this.finalWhiteBack = game.add.image(0,0,"final_white_rect")
+        this.finalWhiteBack.anchor.set(0.5,0.5);
+        this.finalWhiteGroup.add(this.finalWhiteBack);
+        
+
+        
+        this.finalClose = game.add.button(315,-165,"final_close",function(){
+            this.finalWhiteGroup.visible = false;
+        },this);
+        this.finalClose.anchor.set(0.5,0.5);
+        this.finalWhiteGroup.add(this.finalClose);
+
+        
+        this.finalWhiteHeader = game.add.text(-330, -190, ">12",
+            { font: "90px robotoM", fill: "#0077FF", align: "left", boundsAlignH: "center", boundsAlignV: "middle" });
+        this.finalWhiteHeader.anchor.set(0,0)
+        this.finalWhiteGroup.add(this.finalWhiteHeader);
+
+        
+        this.finalWhiteText = game.add.text(-330, -70, "Надёжный пароль — это\nминимум 12 символов.",
+            { font: "35px robotoM", fill: "#000000", align: "left", boundsAlignH: "center", boundsAlignV: "middle" });
+        this.finalWhiteText.anchor.set(0,0)
+        this.finalWhiteGroup.add(this.finalWhiteText);
+
+        this.finalGroup2.add(this.finalWhiteGroup);
+        
+        this.blueBack[3] = game.add.image(0,-20,"final_blue");
+        this.blueBack[3].anchor.set(0.5,0.5);
+        this.finalGroup2.add(this.blueBack[3]);
+
+
+        this.introFinalText = game.add.text(-370, -180, "Но пароли от аккаунтов\nдолжны быть гораздо\nсложнее",
         { font: "60px robotoM", fill: "#ffffff", align: "left", boundsAlignH: "center", boundsAlignV: "middle" });
-        ft6.anchor.set(0,0)
-        this.finalGroup2.add(ft6);
+        this.introFinalText.anchor.set(0,0)
+        this.finalGroup2.add(this.introFinalText);
 
-        let finalButton = game.add.button(300,70,'button_final',function(){
 
+
+        this.openFinalK = 0;
+
+        this.finalMoving = false;
+
+        this.finalButton = game.add.button(300,70,'button_final',function(){
+
+            if (!this.finalMoving)
+            {
+                ym(92442722,'reachGoal',"click_more")
+
+                this.finalMoving = true;
+
+                this.finalWhiteGroup.visible = false;
+
+
+                let moveTo = 1-this.openFinalK;
+                
+
+                let tween = this.game.add.tween(this);
+                tween.to({openFinalK:moveTo},
+                    Phaser.Timer.SECOND/2,
+                    Phaser.Easing.Quartic.Out
+                );
+                tween.onComplete.add(function () {
+                    this.finalMoving = false;
+                }.bind(this));
+                tween.start();
+
+            }
+            
         },this,0,0,0,0);
-        finalButton.anchor.set(0.5,0.5);
+        this.finalButton.anchor.set(0.5,0.5);
 
-        this.finalGroup2.add(finalButton);
+        this.finalGroup2.add(this.finalButton);
 
         this.finalShowPos = 0;
 
@@ -423,6 +604,7 @@ GameState.prototype = {
             }.bind(this));
         tween.start();
 
+        //this.showMath();
 
     },
 
@@ -564,6 +746,9 @@ GameState.prototype = {
     showMath : function()
     {
 
+        
+        ym(92442722,'reachGoal',"test_end")
+
         this.mainMathGroup.visible = true;
 
         let tween = this.game.add.tween(this);
@@ -616,7 +801,6 @@ GameState.prototype = {
 
         })
 
-        console.log(arr);
 
 
         let cat1 = arr[0][0];
@@ -632,8 +816,27 @@ GameState.prototype = {
                     this.showId = FINAL_DATA[i]["image_id"];
                     this.showPass = FINAL_DATA[i]["name"];
                 }
+        
+        this.showPass = this.showPass.replace(/ /g,'_');  
 
         this.showCategory = "вы чаще всего выбирали\nкатегории «"+CATEGORIES_NAME[cat1]+"» и «"+CATEGORIES_NAME[cat2]+"»";
+
+
+        if (arr[0][1]===0 && arr[1][1]===0)
+        {
+            this.showId = "zero";
+            this.showPass = "любопытный_тестировщик"
+            this.showCategory = "Наверняка вам что-то всё-таки\nпонравилось. Пройдите тест\nзаново и выберите что-нибудь"
+        
+            
+            ym(92442722,'reachGoal',"tester")
+        }
+        else
+        {
+            
+            ym(92442722,'reachGoal',"has_"+cat1)
+            ym(92442722,'reachGoal',"has_"+cat2)
+        }
 
         game.load.image(this.showId,"assets/final_compressed/"+this.showId+".jpg");
         game.load.start();
@@ -645,6 +848,8 @@ GameState.prototype = {
     showFinal : function() 
     {
 
+
+        ym(92442722,'reachGoal',"result_loaded")
 
         this.finalImage = game.add.image(0,0,this.showId);
         this.finalImage.anchor.set(0.5,0.5);
@@ -673,6 +878,8 @@ GameState.prototype = {
     startTest : function()
     {
 
+
+        ym(92442722,'reachGoal',"test_start")
 
         this.mainTestGroup.visible = true;
         this.mainTestGroup.alpha = 0;
@@ -841,7 +1048,6 @@ GameState.prototype = {
                 offx = (this.startClickPos.x - game.input.x)/GAME_WIDTH;
 
                 this.cardPos[this.testStep].x = offx;
-                console.log(offx)
             }
             else
             {
@@ -949,6 +1155,64 @@ GameState.prototype = {
 
             this.mathText.text = ss;
         }
+
+
+        this.shareBigI+=1;
+
+        let sc = 1+Math.cos(this.shareBigI/20)/20;
+
+        this.shareButtonBig.scale.set(sc,sc);
+
+
+        if (this.openFinalK>0)
+            this.finalButton.scale.set(1,-1)
+        else
+            this.finalButton.scale.set(1,1);
+
+
+        for (let i=0;i<4;i++)
+        {
+            this.introFinalText.y = -180 - 360*this.openFinalK;
+
+            
+            this.blueBack[i].y = -20 + this.openFinalK*(-390+270*i);
+
+            this.finalButton.y = 70+400*this.openFinalK;
+
+
+            
+            this.finalRect[i].visible = this.openFinalK>0;
+
+            this.finalRect[i].x = (-1+2*(i%2))*200*this.openFinalK;
+
+            
+            this.finalRect[i].y = -20+ (-1+2*(Math.floor(i/2)))*120*this.openFinalK;
+
+            this.finalText[i].x = this.finalRect[i].x-130;
+            this.finalText[i].y = this.finalRect[i].y-80;
+        }
+
+
+    },
+
+    openURL : function (url,goal) {
+
+
+
+        ym(92442722,'reachGoal',goal)
+
+        let gameCanvas = document.getElementsByTagName('canvas')[0];
+
+            if (gameCanvas !== null)  {
+                let endInteractFunction = function() {
+                    window.open(url, this.mode, this.mode === '' ? `width=${this.width},height=${this.height}` : '');
+                    gameCanvas.onmouseup = null;
+                    gameCanvas.ontouchend = null;
+                }
+
+                gameCanvas.ontouchend = endInteractFunction;
+                gameCanvas.onmouseup = endInteractFunction;
+            }
 
     }
 

@@ -63,12 +63,27 @@ PreloadState.prototype = {
 
         game.load.spritesheet('circle_small', 'assets/circle_small.png',90/2,45);
 
+        const shuffleArray = array => {
+            for (let i = array.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              const temp = array[i];
+              array[i] = array[j];
+              array[j] = temp;
+            }
+          };
+
         CATEGORIES.forEach(function(e){
+
+
+            let arr = [1,2,3,4,5];
+
+
+            shuffleArray(arr);
 
             for (let i=0;i<CATEGORIES_IMAGE_NUM;i++)
             {
-                let idd = (i+1)+""
-                game.load.image(e+idd,'assets/questions_compressed/'+e+idd+'.jpg');
+                
+                game.load.image(e+(i+1),'assets/questions_compressed/'+e+arr[i]+'.jpg');
             }
         }.bind(this));
 
@@ -81,7 +96,7 @@ PreloadState.prototype = {
         game.load.image('image_overlay','assets/image_overlay.png');
 
 
-        game.load.image('final_test','assets/final_test.jpg');
+        //game.load.image('final_test','assets/final_test.jpg');
 
         game.load.image('final_back','assets/final_back.png');
         game.load.image('circle_overlay','assets/circle_overlay.png');
@@ -91,11 +106,17 @@ PreloadState.prototype = {
 
         
         game.load.image('button_final','assets/button_final.png');
-        game.load.image('button_share','assets/button_share.png');
-        //game.load.image('button_restart','assets/button_restart.png');
+        game.load.image('button_share_big','assets/button_share_big.png');
+        game.load.image('button_restart','assets/button_restart.png');
+
+        game.load.spritesheet('button_share','assets/button_share.png',345/3,115);
 
 
         game.load.image('heart_opened', 'assets/heart_opened.png')
+
+        
+        game.load.image('final_white_rect','assets/final_white_rect.png');
+        game.load.image('final_close','assets/final_close.png');
     }
     ,
 
@@ -143,6 +164,8 @@ PreloadState.prototype = {
         tween.start();
 
         
+        ym(92442722,'reachGoal',"game_loaded")
+
         let tween2 = this.game.add.tween(whiteOverlay);
         tween2.to({alpha:1},
                 Phaser.Timer.SECOND,
